@@ -1,0 +1,10 @@
+ 
+{
+  "id": "bbcode-converter",
+  "name": "BBCode Converter",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Convert selected text to BBCode and copy to clipboard.",
+  "author": "martokk",
+  "isDesktopOnly": false
+}
