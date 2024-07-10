@@ -1,17 +1,40 @@
-import { Plugin, Editor, Menu, Notice } from 'obsidian';
+import { Plugin, Editor, MarkdownView, Notice, addIcon, Platform } from 'obsidian';
 
 export default class BBCodeConverterPlugin extends Plugin {
   async onload() {
+    // Add the icon for the mobile toolbar
+    addIcon('bbcode', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H6a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h4M14 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M9 12h6"/></svg>');
+
+    // Add command for converting to BBCode
+    this.addCommand({
+      id: 'convert-to-bbcode',
+      name: 'Convert to BBCode',
+      icon: 'bbcode',
+      editorCallback: (editor: Editor) => this.convertToBBCode(editor),
+      hotkeys: [{ modifiers: ["Mod", "Shift"], key: "b" }]
+    });
+
+    // Add to editor menu (right-click menu)
     this.registerEvent(
-      this.app.workspace.on('editor-menu', (menu: Menu, editor: Editor) => {
+      this.app.workspace.on('editor-menu', (menu, editor: Editor) => {
         menu.addItem((item) => {
           item
             .setTitle('Convert to BBCode')
-            .setIcon('clipboard-copy')
+            .setIcon('bbcode')
             .onClick(() => this.convertToBBCode(editor));
         });
       })
     );
+
+    // Add to mobile toolbar
+    if (Platform.isMobile) {
+      this.addRibbonIcon('bbcode', 'Convert to BBCode', (evt: MouseEvent) => {
+        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        if (view) {
+          this.convertToBBCode(view.editor);
+        }
+      });
+    }
   }
 
   convertToBBCode(editor: Editor) {
